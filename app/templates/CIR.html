@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Critical Incident Report</h1>
+  <form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.incident_datetime.label }}<br>
+      {{ form.incident_datetime() }}
+    </p>
+    <p>
+      {{ form.school_name.label }}<br>
+      {{ form.school_name() }}
+    </p>
+    <p>
+      {{ form.incident_type.label }}<br>
+      {{ form.incident_type() }}
+    </p>
+    <p>
+      {{ form.incident_narrative.label }}<br>
+      {{ form.incident_narrative(cols="50", rows="10") }}
+    </p>
+    <p>
+      {{ form.comments.label }}<br>
+      {{ form.comments(cols="50", rows="10") }}
+    </p>
+    <p>{{ form.phys_restraint.label }} {{form.phys_restraint() }}</p>
+    <p>{{ form.police.label }} {{ form.police() }}</p>
+    <p>{{ form.fire_rescue.label }} {{ form.fire_rescue() }}</p>
+    <p>{{ form.dcyf.label }} {{ form.dcyf() }}</p>
+    <p>{{ form.risk_assessment.label }} {{ form.risk_assessment() }}</p>
+    <p>
+      {{ form.cteam_response.label }}<br>
+      {{ form.cteam_response() }}
+    </p>
+    <p>{{ form.submit() }}</p>
+  </form>
+{% endblock %}
