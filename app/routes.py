@@ -1,8 +1,9 @@
 from flask import render_template, url_for, flash, redirect, request
 from app import app, db
 from app.forms import LoginForm, CIRForm
+from app.email import CIR_mail
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User
+from app.models import User, CIReport, SchoolLookup
 from werkzeug.urls import url_parse
 
 @app.route('/')
@@ -37,4 +38,25 @@ def logout():
 @login_required
 def CIR():
     form = CIRForm()
+    if form.validate_on_submit():
+        report = CIReport(
+            author=current_user,
+            incident_datetime=form.incident_date.data,
+            school_name=form.school_name.data,
+            incident_type=form.incident_type.data,
+            narrative=form.incident_narrative.data,
+            comments=form.comments.data,
+            phys_restraint=form.phys_restraint.data,
+            police=form.police.data,
+            phys_harm=form.phys_harm.data,
+            fire_rescue=form.fire_rescue.data,
+            dcyf=form.dcyf.data,
+            risk_assessment=form.risk_assessment.data,
+            cteam_response=form.cteam_response.data
+        )
+        db.session.add(report)
+        db.session.commit()
+        CIR_mail(current_user, report)
+        flash('Thank you for submitting your report')
+        return(redirect(url_for('index')))
     return render_template("CIR.html", title="Critical Incident Report", form=form)
