@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+  <h3>Reports Previously Submitted by {{ user.username }}</h3>
+  <hr>
+  <table id="user_reports" style="width:100%">
+    <tr>
+      <th onclick="sortTable(0)">Report Number</th>
+      <th onclick="sortTable(1)">Incident Date</th>
+      <th onclick="sortTable(2)">Incident Type</th>
+      <th>Restraint</th>
+      <th>Police</th>
+      <th>Physical Harm</th>
+      <th>Fire and Rescue</th>
+      <th>DCYF</th>
+      <th>Risk Assessment</th>
+    </tr>
+    {% for report in reports %}
+    <tr>
+      <td><a href="{{ url_for('CIR_review', report_id=report.id) }}">{{ report.id }}</a></td>
+      <td>{{ report.incident_datetime }}</td>
+      <td>{{ report.incident_type }}</td>
+      <td>{{ report.phys_restraint }}</td>
+      <td>{{ 'Yes' if report.police else 'No'}}</td>
+      <td>{{ 'Yes' if report.phys_harm else 'No' }}</td>
+      <td>{{ 'Yes' if report.fire_rescue else 'No' }}</td>
+      <td>{{ 'Yes' if report.dcyf else 'No' }}</td>
+      <td>{{ 'Yes' if report.risk_assessment else 'No' }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <script>
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount=0;
+      table = document.getElementById("user_reports");
+      switching = true;
+      dir = "asc";
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;
+        } else {
+          if (switchcount == 0 && dir == 'asc') {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+    </script>
+{% endblock %}

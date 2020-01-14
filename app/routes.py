@@ -8,7 +8,6 @@ from werkzeug.urls import url_parse
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
     return render_template('index.html', title='Home')
 
@@ -58,5 +57,22 @@ def CIR():
         db.session.commit()
         CIR_mail(current_user, report)
         flash('Thank you for submitting your report')
-        return(redirect(url_for('index')))
+        return redirect(url_for('index'))
     return render_template("CIR.html", title="Critical Incident Report", form=form)
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    if current_user.is_authenticated:
+        user = User.query.filter_by(username=username).first_or_404()
+        reports = [report for report in user.reports]
+        return render_template('user.html', user=user, reports=reports)
+    return redirect(url_for('login'))
+
+@app.route('/user/report/<report_id>')
+@login_required
+def CIR_review(report_id):
+    if current_user.is_authenticated:
+        report = CIReport.query.get(report_id)
+        return render_template("view_CIR.html", report=report)
+    return redirect(url_for('login'))
