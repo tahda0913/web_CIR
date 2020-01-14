@@ -60,19 +60,50 @@ def CIR():
         return redirect(url_for('index'))
     return render_template("CIR.html", title="Critical Incident Report", form=form)
 
+
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    if current_user.is_authenticated:
-        user = User.query.filter_by(username=username).first_or_404()
-        reports = [report for report in user.reports]
-        return render_template('user.html', user=user, reports=reports)
-    return redirect(url_for('login'))
+    user = User.query.filter_by(username=username).first_or_404()
+    reports = [report for report in user.reports]
+    return render_template('user.html', user=user, reports=reports)
+
 
 @app.route('/user/report/<report_id>')
 @login_required
 def CIR_review(report_id):
+    form = CIRForm()
     if current_user.is_authenticated:
         report = CIReport.query.get(report_id)
-        return render_template("view_CIR.html", report=report)
+        if form.validate_on_submit():
+            report.incident_datetime = form.incident_date.data
+            report.school_name = form.school_name.data
+            report.incident_type = form.incident_type.data
+            report.narrative = form.incident_narrative.data
+            report.comments = form.comments.data
+            report.phys_restraint = form.phys_restraint.data
+            report.police = form.police.data
+            report.phys_harm = form.phys_harm.data
+            report.fire_rescue = form.fire_rescue.data
+            report.dcyf = form.dcyf.data
+            report.risk_assessment = form.risk_assessment.data
+            report.cteam_response = form.cteam_response.data
+            db.session.commit()
+            CIR_mail(current_user, report)
+            flash('Your changes have been saved.')
+            return redirect(url_for('user', username=current_user.username))
+        elif request.method == 'GET':
+            form.incident_date.data = report.incident_datetime
+            form.school_name.data = report.school_name
+            form.incident_type.data = report.incident_type
+            form.incident_narrative.data = report.narrative
+            form.comments.data = report.comments
+            form.phys_restraint.data = report.phys_restraint
+            form.police.data = report.police
+            form.phys_harm.data = report.phys_harm
+            form.fire_rescue.data = report.fire_rescue
+            form.dcyf.data = report.dcyf
+            form.risk_assessment.data = report.risk_assessment
+            form.cteam_response.data = report.cteam_response
+        return render_template("edit_CIR.html", report=report, form=form)
     return redirect(url_for('login'))
