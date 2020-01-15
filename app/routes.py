@@ -69,7 +69,7 @@ def user(username):
     return render_template('user.html', user=user, reports=reports)
 
 
-@app.route('/user/report/<report_id>')
+@app.route('/user/report/<report_id>', methods=['GET', 'POST'])
 @login_required
 def CIR_review(report_id):
     form = CIRForm()

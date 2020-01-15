@@ -20,8 +20,8 @@
       <td><a href="{{ url_for('CIR_review', report_id=report.id) }}">{{ report.id }}</a></td>
       <td>{{ report.incident_datetime }}</td>
       <td>{{ report.incident_type }}</td>
-      <td>{{ report.phys_restraint }}</td>
-      <td>{{ 'Yes' if report.police else 'No'}}</td>
+      <td>{{ 'Yes' if report.phys_restraint else 'No'  }}</td>
+      <td>{{ 'Yes' if report.police else 'No' }}</td>
       <td>{{ 'Yes' if report.phys_harm else 'No' }}</td>
       <td>{{ 'Yes' if report.fire_rescue else 'No' }}</td>
       <td>{{ 'Yes' if report.dcyf else 'No' }}</td>
