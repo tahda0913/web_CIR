@@ -20,7 +20,7 @@
       <td><a href="{{ url_for('CIR_review', report_id=report.id) }}">{{ report.id }}</a></td>
       <td>{{ report.incident_datetime }}</td>
       <td>{{ report.incident_type }}</td>
-      <td>{{ 'Yes' if report.phys_restraint else 'No'  }}</td>
+      <td>{{ 'Yes' if report.phys_restraint else 'No' }}</td>
       <td>{{ 'Yes' if report.police else 'No' }}</td>
       <td>{{ 'Yes' if report.phys_harm else 'No' }}</td>
       <td>{{ 'Yes' if report.fire_rescue else 'No' }}</td>
@@ -29,6 +29,12 @@
     </tr>
     {% endfor %}
     </table>
+    {% if prev_url %}
+    <a href="{{ prev_url }}">Newer Reports</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Older Reports</a>
+    {% endif %}
     <script>
     function sortTable(n) {
       var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount=0;

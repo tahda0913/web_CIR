@@ -61,12 +61,18 @@ def CIR():
     return render_template("CIR.html", title="Critical Incident Report", form=form)
 
 
-@app.route('/user/<username>')
+@app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    reports = [report for report in user.reports]
-    return render_template('user.html', user=user, reports=reports)
+    page = request.args.get('page', 1, type=int)
+    reports = user.reports.paginate(page, 10, False)
+    next_url = url_for('user', username=user.username, page=reports.next_num) \
+        if reports.has_next else None
+    prev_url = url_for('user', username=user.username, page=reports.prev_num) \
+        if reports.has_prev else None
+    return render_template('user.html', user=user, reports=reports.items,
+                            next_url=next_url, prev_url=prev_url)
 
 
 @app.route('/user/report/<report_id>', methods=['GET', 'POST'])

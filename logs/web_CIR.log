@@ -97,3 +97,6 @@ Traceback (most recent call last):
   File "c:\reports\applications\web_cir\venv\lib\site-packages\jinja2\parser.py", line 59, in fail
     raise exc(msg, lineno, self.name, self.filename)
 jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+2020-01-16 14:06:05,725 INFO: Web CIR startup [in C:\Reports\Applications\web_CIR\app\__init__.py:49]
+2020-01-16 14:13:36,901 INFO: Web CIR startup [in C:\Reports\Applications\web_CIR\app\__init__.py:49]
+2020-01-16 14:41:59,669 INFO: Web CIR startup [in C:\Reports\Applications\web_CIR\app\__init__.py:49]

@@ -14,12 +14,16 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{{ url_for('index') }}">Critical Incidents</a>
+        <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
       </div>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
           <li><a href="{{ url_for('CIR') }}">Critical Incident Report</a></li>
+          {% if current_user.username %}
           <li><a href="{{ url_for('user', username=current_user.username) }}">My Reports</a></li>
+          {% else %}
+          <li><a href="{{ url_for('login') }}">My Reports</a></li>
+          {% endif %}
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if current_user.is_anonymous %}
