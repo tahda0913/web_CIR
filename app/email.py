@@ -1,3 +1,4 @@
+from threading import Thread
 from flask_mail import Message
 from app import mail
 from app import app
@@ -9,11 +10,15 @@ def send_mail(subject, sender, recipients, text_body, html_body):
     msg.html = html_body
     mail.send(msg)
 
+def send_async_mail(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
 def CIR_mail(user, report):
     mail_subj = f'** ATTENTION CIR - {report.incident_datetime} {report.school_name} {report.incident_type}'
     sender = app.config['ADMINS'][0]
     school = SchoolLookup.query.filter_by(school_name=f'{report.school_name}').first()
-    recipients = school.dist_list.split()    
+    recipients = school.dist_list.split()
     author = User.query.filter_by(id=f'{report.author.id}').first()
     body = f"""
     Incident Date and Time: {report.incident_datetime}
@@ -44,4 +49,4 @@ def CIR_mail(user, report):
     """
 
     msg = Message(mail_subj, sender=sender, recipients=recipients, body=body)
-    mail.send(msg)
+    Thread(target=send_async_mail, args=(app, msg)).start()
