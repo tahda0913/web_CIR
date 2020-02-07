@@ -22,14 +22,14 @@
           {% if current_user.username %}
           <li><a href="{{ url_for('user', username=current_user.username) }}">My Reports</a></li>
           {% else %}
-          <li><a href="{{ url_for('login') }}">My Reports</a></li>
+          <li><a href="{{ url_for('auth.login') }}">My Reports</a></li>
           {% endif %}
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if current_user.is_anonymous %}
-          <li><a href="{{ url_for('login') }}">Login</a></li>
+          <li><a href="{{ url_for('auth.login') }}">Login</a></li>
           {% else %}
-          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+          <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
           {% endif %}
         </ul>
       </div>

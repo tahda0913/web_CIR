@@ -2,11 +2,16 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-  <h2>Critical Incident Report Number: {{ report.id }}</h2>
-  <hr>
-  <div class="row">
-    <div class="col-md-4">
-      {{ wtf.quick_form(form) }}
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h2 class="panel-title"><strong>Critical Incident Report Number: {{ report.id }}</strong></h2>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4">
+          {{ wtf.quick_form(form) }}
+        </div>
+      </div>
     </div>
   </div>
   <hr>
