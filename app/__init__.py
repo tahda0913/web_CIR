@@ -18,6 +18,9 @@ login.login_view = 'auth.login'
 mail = Mail(app)
 bootstrap = Bootstrap(app)
 
+from app.main import bp as main_bp
+app.register_blueprint(main_bp)
+
 from app.errors import bp as errors_bp
 app.register_blueprint(errors_bp)
 
@@ -58,4 +61,4 @@ if not app.debug:
     app.logger.info('Web CIR startup')
 
 
-from app import routes, models
+from app import models

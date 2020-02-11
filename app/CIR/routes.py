@@ -30,7 +30,7 @@ def CIR():
         db.session.commit()
         CIR_mail(current_user, report)
         flash('Thank you for submitting your report')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     return render_template("CIR/CIR.html", title="Critical Incident Report", form=form)
 
 @bp.route('/user/report/<report_id>', methods=['GET', 'POST'])
@@ -55,7 +55,7 @@ def CIR_review(report_id):
             db.session.commit()
             CIR_mail(current_user, report)
             flash('Your changes have been saved.')
-            return redirect(url_for('user', username=current_user.username))
+            return redirect(url_for('main.user', username=current_user.username))
         elif request.method == 'GET':
             form.incident_date.data = report.incident_datetime
             form.school_name.data = report.school_name
