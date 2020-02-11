@@ -18,7 +18,7 @@
       </div>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li><a href="{{ url_for('CIR') }}">Critical Incident Report</a></li>
+          <li><a href="{{ url_for('CIR.CIR') }}">Critical Incident Report</a></li>
           {% if current_user.username %}
           <li><a href="{{ url_for('user', username=current_user.username) }}">My Reports</a></li>
           {% else %}

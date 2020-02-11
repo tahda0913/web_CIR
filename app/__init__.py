@@ -24,6 +24,9 @@ app.register_blueprint(errors_bp)
 from app.auth import bp as auth_bp
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
+from app.CIR import bp as CIR_bp
+app.register_blueprint(CIR_bp, url_prefix='/CIR')
+
 if not app.debug:
     if app.config['MAIL_SERVER']:
         auth = None

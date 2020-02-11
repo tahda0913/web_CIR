@@ -23,7 +23,7 @@
     </tr>
     {% for report in reports %}
     <tr>
-      <td><a href="{{ url_for('CIR_review', report_id=report.id) }}">{{ report.id }}</a></td>
+      <td><a href="{{ url_for('CIR.CIR_review', report_id=report.id) }}">{{ report.id }}</a></td>
       <td>{{ report.incident_datetime }}</td>
       <td>{{ report.incident_type }}</td>
       <td>{{ 'Yes' if report.phys_restraint else 'No' }}</td>
