@@ -40,9 +40,26 @@ class CIReport(db.Model):
     dcyf = db.Column(db.Boolean)
     risk_assessment = db.Column(db.Boolean)
     cteam_response = db.Column(db.String(350))
+    students = db.relationship('CIRStudents', backref='incident', lazy='dynamic')
 
     def __repr__(self):
         return f'CIR Num {self.id} authored by {self.author}'
+
+
+class CIRStudents(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lasid = db.Column(db.Integer, index=True)
+    student_race = db.Column(db.String(50))
+    student_gender = db.Column(db.String(25))
+    student_grade = db.Column(db.Integer)
+    incident_role = db.Column(db.String(50))
+    school_enrolled = db.Column(db.String(100), index=True)
+    parent_notified = db.Column(db.Boolean)
+    cir_id = db.Column(db.Integer, db.ForeignKey('ci_report.id'))
+
+    def __repr__(self):
+        return f'Student {self.lasid} involved in CIR {self.cir_id}'
+
 
 
 class SchoolLookup(db.Model):

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, IntegerField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Regexp
 from app import db
@@ -18,4 +18,10 @@ class CIRForm(FlaskForm):
     dcyf = BooleanField('DCYF')
     risk_assessment = BooleanField('Suicide Risk Assessment Administered')
     cteam_response = SelectField('Crisis Team Response for Suicidal Ideation', choices=[(response, response) for response in get_crisis_response()])
-    submit = SubmitField('Submit Form')
+    submit = SubmitField('Submit Report')
+
+class CIRStudentForm(FlaskForm):
+    lasid = IntegerField('Student ID', validators=[Regexp(r'(\s+|\d{7})', message="Please enter a valid Student ID, or skip this entry")])
+    incident_role = SelectField('Incident Role', choices=[('', ''), ('Aggressor', 'Aggressor'), ('Victim', 'Victim'), ('Witness', 'Witness')])
+    parent_notified = BooleanField('Parent Notified')
+    submit = SubmitField('Add Student')

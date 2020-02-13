@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from app import app, db
 from app.CIR import bp
-from app.CIR.forms import CIRForm
+from app.CIR.forms import CIRForm, CIRStudentForm
 from app.CIR.email import CIR_mail
 from flask_login import current_user, login_required
 from app.models import User, CIReport, SchoolLookup
@@ -9,8 +9,9 @@ from app.models import User, CIReport, SchoolLookup
 @bp.route('/CIR', methods=['GET', 'POST'])
 @login_required
 def CIR():
-    form = CIRForm()
-    if form.validate_on_submit():
+    cir = CIRForm()
+    cirs = CIRStudentForm()
+    if cir.validate_on_submit():
         report = CIReport(
             author=current_user,
             incident_datetime=form.incident_date.data,
@@ -31,9 +32,9 @@ def CIR():
         CIR_mail(current_user, report)
         flash('Thank you for submitting your report')
         return redirect(url_for('main.index'))
-    return render_template("CIR/CIR.html", title="Critical Incident Report", form=form)
+    return render_template("CIR/CIR.html", title="Critical Incident Report", cir=cir, cirs=cirs)
 
-@bp.route('/user/report/<report_id>', methods=['GET', 'POST'])
+@bp.route('/user/report/<report_id>', methods=['GET', 'PUT'])
 @login_required
 def CIR_review(report_id):
     form = CIRForm()
