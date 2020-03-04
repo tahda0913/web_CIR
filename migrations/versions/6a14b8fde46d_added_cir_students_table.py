@@ -1,8 +1,8 @@
-"""student data table
+"""added cir_students table
 
-Revision ID: a516434ee46c
+Revision ID: 6a14b8fde46d
 Revises: 232606481714
-Create Date: 2020-02-11 15:21:12.291976
+Create Date: 2020-02-21 10:14:07.379403
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a516434ee46c'
+revision = '6a14b8fde46d'
 down_revision = '232606481714'
 branch_labels = None
 depends_on = None

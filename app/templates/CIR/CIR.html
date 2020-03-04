@@ -2,6 +2,113 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+  {# Import JQuery #}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <script>
+    /**
+     * Adjust the indices of form fields when removing items.
+     */
+     function adjustIndices(removedIndex) {
+       var $forms = $('.subform');
+
+       $forms.each(function(i) {
+         var $form = $(this);
+         var index = parseInt($form.data('index'));
+         var newIndex = index - 1;
+
+         if (index < removedIndex) {
+           // skip
+           return true;
+         }
+
+         // Change ID in form itself
+         $form.attr('id', $form.attr('id').replace(index, newIndex));
+         $form.data('index', newIndex);
+
+         // Change IDs in form inputs
+         $form.find('input').each(function(j) {
+           var $item = $(this);
+           $item.attr('id', $item.attr('id').replace(index, newIndex));
+           $item.attr('name', $item.attr('name').replace(index, newIndex));
+         });
+       });
+     }
+
+     /**
+      * Remove a form.
+      */
+     function removeForm() {
+       var $removedForm = $(this).closest('.subform');
+       var removedIndex = parseInt($removedForm.data('index'));
+
+       $removedForm.remove();
+
+       // Update indices
+       adjustIndices(removedIndex);
+       return false;
+     }
+
+     /**
+      * Add a new form.
+      */
+     function addForm() {
+       var $templateForm = $('#student-_-form');
+
+       if (!$templateForm) {
+         console.log('[ERROR] Cannot find template');
+         return;
+       }
+
+       // Get Last index
+       var $lastForm = $('.subform').last();
+
+       var newIndex = 0;
+
+       if ($lastForm.length > 0) {
+         newIndex = parseInt($lastForm.data('index')) + 1;
+       }
+
+       // Maximum of 25 subforms
+       if (newIndex > 25) {
+         console.log('[WARNING] Reached maximum number of elements');
+         return;
+       }
+
+       // Add elements
+       var $newForm = $templateForm.clone();
+
+       $newForm.attr('id', $newForm.attr('id').replace('_', newIndex));
+       $newForm.data('index', newIndex);
+
+       $newForm.find('input').each(function(idx) {
+         var $item = $(this);
+
+         $item.attr('id', $item.attr('id').replace('_', newIndex));
+         $item.attr('name', $item.attr('name').replace('_', newIndex));
+       });
+
+       // Append
+       $('#subforms-container').append($newForm);
+       $newForm.addClass('subform');
+       $newForm.removeClass('is-hidden');
+
+       $newForm.find('.remove').click(removeForm);
+       return false;
+     }
+
+     $(document).ready(function() {
+       $('#add').click(addForm);
+       $('.remove').click(removeForm);
+     });
+  </script>
+
+  <style>
+    .is-hidden {
+      display: none;
+    }
+  </style>
+
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h1 class="panel-title">
@@ -9,25 +116,96 @@
       </h1>
     </div>
     <div class="panel-body">
+      {# Show all subforms #}
+      <form id="cir-form" action="" method="POST" role="form">
+        {{ cir.hidden_tag() }}
+        {{ wtf.form_errors(cir, hiddens="only") }}
       <div class="row">
         <div class="col-md-4">
-          {{ wtf.quick_form(cir) }}
+          {{ wtf.form_field(cir.incident_date) }}
+          {{ wtf.form_field(cir.school_name) }}
+          {{ wtf.form_field(cir.incident_type) }}
         </div>
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-4">
-          <form class="form form-horizontal" method="post" role="form">
-            {{ cirs.hidden_tag() }}
-            {{ wtf.form_errors(cirs, hiddens="only") }}
-
-            {{ wtf.form_field(cirs.lasid) }}
-            {{ wtf.form_field(cirs.incident_role) }}
-            {{ wtf.form_field(cirs.parent_notified) }}
-            <br>
-            {{ wtf.form_field(cirs.submit) }}
-          </form>
+        <div class="col-md-2 col-md-offset-1">
+          {{ wtf.form_field(cir.phys_restraint) }}
+          {{ wtf.form_field(cir.phys_harm) }}
+          {{ wtf.form_field(cir.police) }}
+          {{ wtf.form_field(cir.fire_rescue) }}
+          {{ wtf.form_field(cir.dcyf) }}
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-10">
+          {{ wtf.form_field(cir.incident_narrative) }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-10">
+          {{ wtf.form_field(cir.comments) }}
+        </div>
+      </div
+      <hr>
+      <hr>
+      <p><i>**Fill in this section only for self harm/suicidal ideation incidents</i></p>
+      <div class="row">
+        <div class="col-md-6">
+          {{ wtf.form_field(cir.risk_assessment) }}
+          {{ wtf.form_field(cir.cteam_response) }}
+        </div>
+      </div>
+      <hr>
+      <a id="add" href="#">Add Student</a>
+      <div id="subforms-container">
+        {% for subform in cir.students %}
+          <div id="student-{{ loop.index0 }}-form" class="subform" data-index="{{ loop.index0 }}">
+            <div class="row">
+              <div class="col-md-2">
+                {{ subform.lasid.label }}
+                {{ subform.lasid }}
+                {% for error in subform.lasid.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+              <div class="col-md-2">
+                {{ subform.incident_role.label }}
+                {{ subform.incident_role }}
+              </div>
+              <div class="col-md-2">
+                {{ subform.parent_notified.label }}
+                {{ subform.parent_notified }}
+              </div>
+              <a class="remove" href="#">Remove</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# Form template #}
+      <div id="student-_-form" class="is-hidden" data-index="_">
+        <div class="row">
+          <div class="col-md-2">
+            <label for="students-_-lasid">Student ID</label>
+            <input id="students-_-lasid" name="students-_-lasid" type="text" value="">
+          </div>
+          <div class="col-md-2">
+            <label for="students-_-incident_role">Incident Role</label>
+            <select id="students-_-incident_role" name="students-_-incident_role"><option value=""></option><option value="Aggressor">Aggressor</option><option value="Victim">Victim</option><option value="Witness">Witness</option></select>
+          </div>
+          <div class="col-md-2">
+            <label for="students-_-parent_notified">Parent Notified</label>
+            <input id="students-_-parent_notified" name="students-_-parent_notified" type="checkbox" value="y">
+          </div>
+          <a class="remove" href="#">Remove</a>
+        </div>
+      </div>
+
+        <div class="row">
+          <div class="col-md-1 col-md-offset-5">
+            {{ wtf.form_field(cir.submit) }}
+          </div>
+        </div>
+        </form>
+        </div>
     </div>
   </div>
 {% endblock %}

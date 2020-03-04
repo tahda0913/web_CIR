@@ -4,35 +4,39 @@ from app.CIR import bp
 from app.CIR.forms import CIRForm, CIRStudentForm
 from app.CIR.email import CIR_mail
 from flask_login import current_user, login_required
-from app.models import User, CIReport, SchoolLookup
+from app.models import User, CIReport, SchoolLookup, CIRStudents
 
 @bp.route('/CIR', methods=['GET', 'POST'])
 @login_required
 def CIR():
     cir = CIRForm()
-    cirs = CIRStudentForm()
     if cir.validate_on_submit():
         report = CIReport(
             author=current_user,
-            incident_datetime=form.incident_date.data,
-            school_name=form.school_name.data,
-            incident_type=form.incident_type.data,
-            narrative=form.incident_narrative.data,
-            comments=form.comments.data,
-            phys_restraint=form.phys_restraint.data,
-            police=form.police.data,
-            phys_harm=form.phys_harm.data,
-            fire_rescue=form.fire_rescue.data,
-            dcyf=form.dcyf.data,
-            risk_assessment=form.risk_assessment.data,
-            cteam_response=form.cteam_response.data
+            incident_datetime=cir.incident_date.data,
+            school_name=cir.school_name.data,
+            incident_type=cir.incident_type.data,
+            narrative=cir.incident_narrative.data,
+            comments=cir.comments.data,
+            phys_restraint=cir.phys_restraint.data,
+            police=cir.police.data,
+            phys_harm=cir.phys_harm.data,
+            fire_rescue=cir.fire_rescue.data,
+            dcyf=cir.dcyf.data,
+            risk_assessment=cir.risk_assessment.data,
+            cteam_response=cir.cteam_response.data
         )
         db.session.add(report)
+
+        for student in cir.students.data:
+            new_student = CIRStudents(**student)
+            report.students.append(new_student)
+
         db.session.commit()
         CIR_mail(current_user, report)
         flash('Thank you for submitting your report')
         return redirect(url_for('main.index'))
-    return render_template("CIR/CIR.html", title="Critical Incident Report", cir=cir, cirs=cirs)
+    return render_template("CIR/CIR.html", title="Critical Incident Report", cir=cir)
 
 @bp.route('/user/report/<report_id>', methods=['GET', 'PUT'])
 @login_required

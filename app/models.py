@@ -40,7 +40,6 @@ class CIReport(db.Model):
     dcyf = db.Column(db.Boolean)
     risk_assessment = db.Column(db.Boolean)
     cteam_response = db.Column(db.String(350))
-    students = db.relationship('CIRStudents', backref='incident', lazy='dynamic')
 
     def __repr__(self):
         return f'CIR Num {self.id} authored by {self.author}'
@@ -56,6 +55,9 @@ class CIRStudents(db.Model):
     school_enrolled = db.Column(db.String(100), index=True)
     parent_notified = db.Column(db.Boolean)
     cir_id = db.Column(db.Integer, db.ForeignKey('ci_report.id'))
+    incident = db.relationship('CIReport',
+        backref=db.backref('students', lazy='dynamic', collection_class=list)
+    )
 
     def __repr__(self):
         return f'Student {self.lasid} involved in CIR {self.cir_id}'

@@ -45,7 +45,7 @@ def CIR_mail(user, report):
 
     Suicide Risk Assessment Administered: {'Yes' if report.risk_assessment else 'No'}
 
-    Crisis Team Responsee for Suicidal Ideation: {report.cteam_response}
+    Crisis Team Response for Suicidal Ideation: {report.cteam_response}
     """
 
     msg = Message(mail_subj, sender=sender, recipients=recipients, body=body)

@@ -1,9 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, IntegerField
+from wtforms import Form, StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, IntegerField, FieldList, FormField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Regexp
 from app import db
 from app.models import get_school_list, get_incident_types, get_crisis_response
+
+class CIRStudentForm(Form):
+    lasid = StringField('Student ID', validators=[Regexp(r'(\s+|\d{7})', message="Please enter a valid Student ID, or skip this entry")])
+    incident_role = SelectField('Incident Role', choices=[('', ''), ('Aggressor', 'Aggressor'), ('Victim', 'Victim'), ('Witness', 'Witness')])
+    parent_notified = BooleanField('Parent Notified')
 
 class CIRForm(FlaskForm):
     incident_date = DateField('Incident Date', format='%Y-%m-%d', validators=[DataRequired(message="Please enter Date of Incident")])
@@ -18,10 +23,9 @@ class CIRForm(FlaskForm):
     dcyf = BooleanField('DCYF')
     risk_assessment = BooleanField('Suicide Risk Assessment Administered')
     cteam_response = SelectField('Crisis Team Response for Suicidal Ideation', choices=[(response, response) for response in get_crisis_response()])
+    students = FieldList(
+        FormField(CIRStudentForm),
+        min_entries = 0,
+        max_entries = 25
+    )
     submit = SubmitField('Submit Report')
-
-class CIRStudentForm(FlaskForm):
-    lasid = IntegerField('Student ID', validators=[Regexp(r'(\s+|\d{7})', message="Please enter a valid Student ID, or skip this entry")])
-    incident_role = SelectField('Incident Role', choices=[('', ''), ('Aggressor', 'Aggressor'), ('Victim', 'Victim'), ('Witness', 'Witness')])
-    parent_notified = BooleanField('Parent Notified')
-    submit = SubmitField('Add Student')
